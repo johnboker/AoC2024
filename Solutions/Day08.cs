@@ -93,7 +93,6 @@ namespace AoC2024.Solutions
             public List<(int R, int C)> GetAntiNodes1(char[,] grid)
             {
                 var slope = Slope();
-                var slopeDir = (slope.C == 0 || slope.R == 0) ? 0 : (slope.R / slope.C > 0 ? 1 : -1);
 
                 var antiNodes = new List<(int R, int C)>
                 {
@@ -111,7 +110,6 @@ namespace AoC2024.Solutions
             public List<(int R, int C)> GetAntiNodes2(char[,] grid)
             {
                 var slope = Slope();
-                var slopeDir = (slope.C == 0 || slope.R == 0) ? 0 : (slope.R / slope.C > 0 ? 1 : -1);
 
                 var m = GCM(Math.Abs(slope.R), Math.Abs(slope.C));
                 slope.R /= m;
