@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Formats.Asn1;
 using System.IO;
 using System.Linq;
+using HandlebarsDotNet;
 
 namespace AoC2024
 {
@@ -29,6 +31,19 @@ namespace AoC2024
                     Timer.Time(daySolution.SolvePart2);
                 }
             }
+            else
+            {
+                GenerateFiles(dayString);
+            }
+        }
+
+        private static void GenerateFiles(string dayString)
+        {
+            var template = Handlebars.Compile(File.ReadAllText("Templates/Day.hbs"));
+            using var writer =  File.CreateText($"Solutions/Day{dayString}.cs");
+            writer.Write(template(new { DayString = dayString }));
+            using var s1 = File.Create($"Inputs/input{dayString}.txt");
+            using var s2 = File.Create($"Inputs/input{dayString}_test.txt");
         }
     }
 }
