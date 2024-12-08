@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Formats.Asn1;
-using System.IO;
-using System.Linq;
+﻿using Microsoft.Extensions.Configuration;
+using System.Net;
 using HandlebarsDotNet;
 
 namespace AoC2024
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             bool testInput = args.Contains("-t");
 
@@ -33,17 +30,36 @@ namespace AoC2024
             }
             else
             {
-                GenerateFiles(dayString);
+                await GenerateFiles(dayString);
             }
         }
 
-        private static void GenerateFiles(string dayString)
+        private static async Task GenerateFiles(string dayString)
         {
-            var template = Handlebars.Compile(File.ReadAllText("Templates/Day.hbs"));
-            using var writer =  File.CreateText($"Solutions/Day{dayString}.cs");
-            writer.Write(template(new { DayString = dayString }));
-            using var s1 = File.Create($"Inputs/input{dayString}.txt");
+            var builder = new ConfigurationBuilder()
+                   .SetBasePath(Directory.GetCurrentDirectory())
+                   .AddJsonFile($"appsettings.local.json", true, true);
+
+            var config = builder.Build();
+            var sessionCookieValue = config["aoc:session"];
+            Console.WriteLine(sessionCookieValue);
+            var cookieContainer = new CookieContainer();
+
+            using var handler = new HttpClientHandler() { CookieContainer = cookieContainer };
+            cookieContainer.Add(new Uri("https://adventofcode.com"), new Cookie("session", sessionCookieValue));
+            var httpClient = new HttpClient(handler);
+            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("boker.dev input retriever 1.0");
+            var content = await httpClient.GetStringAsync($"https://adventofcode.com/2024/day/{int.Parse(dayString)}/input");
+
+
+            using var inputWriter = File.CreateText($"Inputs/input{dayString}.txt");
+            inputWriter.Write(content);
+
             using var s2 = File.Create($"Inputs/input{dayString}_test.txt");
+
+            var template = Handlebars.Compile(File.ReadAllText("Templates/Day.hbs"));
+            using var writer = File.CreateText($"Solutions/Day{dayString}.cs");
+            writer.Write(template(new { DayString = dayString }));
         }
     }
 }
