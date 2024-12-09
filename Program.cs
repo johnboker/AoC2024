@@ -42,15 +42,13 @@ namespace AoC2024
 
             var config = builder.Build();
             var sessionCookieValue = config["aoc:session"];
-            Console.WriteLine(sessionCookieValue);
-            var cookieContainer = new CookieContainer();
 
+            var cookieContainer = new CookieContainer();
             using var handler = new HttpClientHandler() { CookieContainer = cookieContainer };
             cookieContainer.Add(new Uri("https://adventofcode.com"), new Cookie("session", sessionCookieValue));
             var httpClient = new HttpClient(handler);
             httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("boker.dev input retriever 1.0");
             var content = await httpClient.GetStringAsync($"https://adventofcode.com/2024/day/{int.Parse(dayString)}/input");
-
 
             using var inputWriter = File.CreateText($"Inputs/input{dayString}.txt");
             inputWriter.Write(content);
