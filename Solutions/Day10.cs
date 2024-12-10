@@ -56,8 +56,7 @@ namespace AoC2024.Solutions
                         {
                             for (var j = 1; j < nextPositions.Count; j++)
                             {
-                                var newPath = new List<(int R, int C)>(path);
-                                newPath.Add(nextPositions[j]);
+                                var newPath = new List<(int R, int C)>(path) { nextPositions[j] };
                                 paths.Add(newPath);
                             }
                         }
@@ -109,8 +108,7 @@ namespace AoC2024.Solutions
                         {
                             for (var j = 1; j < nextPositions.Count; j++)
                             {
-                                var newPath = new List<(int R, int C)>(path);
-                                newPath.Add(nextPositions[j]);
+                                var newPath = new List<(int R, int C)>(path) { nextPositions[j] };
                                 paths.Add(newPath);
                             }
                         }
